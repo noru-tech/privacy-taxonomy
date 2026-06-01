@@ -28,7 +28,7 @@ Fideslang key.
 ## What you get
 
 ```yaml
-# fides_resources/datamap.yml  (excerpt)
+# .fides/datamap.yml  (excerpt)
 dataset:
   - fides_key: app_postgres
     collections:
@@ -110,7 +110,7 @@ or invoke the skill directly:
 /privacy-datamap
 ```
 
-It writes `fides_resources/datamap.yml` (override the path by saying where you want it), validates it,
+It writes `.fides/datamap.yml` (override the path by saying where you want it), validates it,
 and summarizes what it found.
 
 ### Run the bundled tools directly
@@ -122,7 +122,7 @@ SKILL=skills/privacy-datamap
 python3 "$SKILL/scripts/dump_taxonomy.py"            # categories | uses | subjects
 
 # Validate a manifest against the bundled snapshot
-python3 "$SKILL/scripts/validate_manifest.py" fides_resources/datamap.yml
+python3 "$SKILL/scripts/validate_manifest.py" .fides/datamap.yml
 ```
 
 The validator exits `0` on success, `1` on validation errors (each unknown key comes with a

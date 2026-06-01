@@ -25,7 +25,7 @@ come from the bundled snapshot in `references/taxonomy/` (provenance in
 
 ## Output format
 
-A YAML file (default `fides_resources/datamap.yml` in the target repo) with two top-level lists:
+A YAML file (default `.fides/datamap.yml` in the target repo) with two top-level lists:
 
 ```yaml
 dataset:
@@ -58,6 +58,11 @@ Print the canonical keys you are allowed to use, and read the mapping guidance:
 ```bash
 python3 "$SKILL_DIR/scripts/dump_taxonomy.py"        # categories + uses + subjects (with descriptions)
 ```
+**Read the full output — do not pipe through `head` or any other truncation.** The script prints the
+total key count (e.g. `[85 keys]`) in each section header; verify that you have seen that many lines
+before concluding you have the complete list. Keys near the end of the list (such as `user.unique_id`,
+`user.unique_id.pseudonymous`, `user.sensor`) are silently lost if output is cut short.
+
 Read `references/classification-guide.md` for the field-name → category cheat-sheet and for how to
 infer `system_type`, `data_use`, and `data_subjects`. **Only keys printed here are valid** — never
 invent a key.
@@ -87,13 +92,14 @@ One System per deployable service/app. Set `system_type`, `dataset_references` (
 `third_party_sharing` declarations where data clearly leaves the system.
 
 ### 5. Write the manifest
-Write to `fides_resources/datamap.yml` in the target repo (or a path the user specified). Use the
+Write to `.fides/datamap.yml` in the target repo (or a path the user specified). `.fides/` is the
+directory the `fides` CLI conventionally reads (`fides push .fides/`). Create it if absent. Use the
 `dataset:` / `system:` top-level list shape shown above. Add brief `# TODO: verify` comments on any
 low-confidence labels.
 
 ### 6. Validate (and fix until clean)
 ```bash
-python3 "$SKILL_DIR/scripts/validate_manifest.py" fides_resources/datamap.yml
+python3 "$SKILL_DIR/scripts/validate_manifest.py" .fides/datamap.yml
 ```
 Fix every reported error (unknown keys come with a "did you mean …?" hint) and re-run until it prints
 `OK: N dataset(s), N system(s), all keys valid`. Treat warnings as review items.

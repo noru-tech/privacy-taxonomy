@@ -11,7 +11,7 @@ All notable changes to this project are documented here. The format is based on
 ### Added
 - Initial release of the `privacy-taxonomy` Claude Code plugin.
 - `privacy-datamap` skill: scans a repository and generates a Fides data map manifest
-  (`dataset` + `system` resources) written to `fides_resources/datamap.yml`.
+  (`dataset` + `system` resources) written to `.fides/datamap.yml`.
 - Bundled, offline taxonomy snapshot (vendored from Fideslang, CC BY 4.0) under
   `skills/privacy-datamap/references/taxonomy/`.
 - `scripts/dump_taxonomy.py` — prints the bundled taxonomy (standard library only).

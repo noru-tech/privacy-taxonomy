@@ -29,7 +29,7 @@ This plugin runs **locally** and is designed to be self-contained:
 
 - It uses only the Python standard library and performs **no network calls at runtime**.
 - It **reads** source files in the target repository and **writes** a single manifest
-  (`fides_resources/datamap.yml` by default).
+  (`.fides/datamap.yml` by default).
 - The bundled scripts execute under your own permissions. As with any tool you run on a codebase,
   review it before running it against sensitive repositories.
 
