@@ -1,0 +1,28 @@
+privacy-taxonomy
+Copyright (c) 2026 Noru
+
+This product is distributed under the MIT License (see LICENSE) with the
+exception noted below.
+
+================================================================================
+Third-party attribution
+================================================================================
+
+This product includes the Fideslang privacy taxonomy.
+
+  Fideslang — https://github.com/ethyca/fideslang
+  Copyright (c) Ethyca, Inc.
+  Licensed under the Creative Commons Attribution 4.0 International License
+  (CC BY 4.0): https://creativecommons.org/licenses/by/4.0/
+
+The taxonomy data files in
+`skills/privacy-datamap/references/taxonomy/` (data_categories.json,
+data_uses.json, data_subjects.json) are a MODIFIED redistribution of Fideslang:
+the upstream Python definitions in `src/fideslang/default_taxonomy/*.py` were
+reformatted into JSON and reduced to the `fides_key`, `name`, and `description`
+fields. No endorsement by Ethyca, Inc. is implied.
+
+This data remains licensed under CC BY 4.0; the MIT License covering the rest of
+this repository does not apply to it. See
+`skills/privacy-datamap/references/taxonomy/SOURCE.md` for the exact snapshot
+provenance (commit, version, date) and instructions to refresh it.

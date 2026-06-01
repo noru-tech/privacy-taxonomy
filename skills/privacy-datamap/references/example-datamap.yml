@@ -1,0 +1,64 @@
+# Example Fides data map — a complete, valid manifest the skill should pattern-match its output on.
+# Two top-level resources: `dataset` (schema + per-field data_categories) and `system`
+# (privacy_declarations with data_use + data_subjects). Validate with:
+#     python3 scripts/validate_manifest.py references/example-datamap.yml
+
+dataset:
+  - fides_key: app_postgres
+    name: Application Postgres
+    description: Primary relational store for the web app.
+    collections:
+      - name: users
+        description: Registered end users.
+        fields:
+          - name: id
+            description: Primary key.
+            data_categories: [user.unique_id]
+          - name: email
+            data_categories: [user.contact.email]
+          - name: phone
+            data_categories: [user.contact.phone_number]
+          - name: full_name
+            data_categories: [user.name]
+          - name: date_of_birth
+            data_categories: [user.demographic.date_of_birth]
+          - name: last_login_ip
+            data_categories: [user.device.ip_address]
+          - name: password_hash
+            data_categories: [user.authorization.password]
+          - name: created_at
+            # Bookkeeping timestamp — operational, not personal data.
+            data_categories: [system.operations]
+      - name: payment_methods
+        fields:
+          - name: card_number
+            data_categories: [user.financial.credit_card]
+          - name: billing_address
+            data_categories:
+              - user.contact.address.street
+              - user.contact.address.city
+              - user.contact.address.postal_code
+
+system:
+  - fides_key: web_app
+    name: Customer Web Application
+    description: Public-facing storefront and account portal.
+    system_type: Application
+    dataset_references:
+      - app_postgres
+    privacy_declarations:
+      - name: Provide account and storefront
+        data_use: essential.service
+        data_categories:
+          - user.contact.email
+          - user.name
+        data_subjects:
+          - customer
+      - name: Product analytics
+        data_use: analytics.reporting
+        data_categories:
+          - user.device.ip_address
+          - user.behavior
+        data_subjects:
+          - customer
+          - anonymous_user

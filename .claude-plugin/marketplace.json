@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
+  "name": "privacy-taxonomy",
+  "owner": {
+    "name": "Noru",
+    "email": "support@noru.tech"
+  },
+  "description": "A marketplace for privacy-engineering Claude Code plugins, starting with the privacy-taxonomy data-map generator.",
+  "plugins": [
+    {
+      "name": "privacy-taxonomy",
+      "source": "./",
+      "description": "Generate a Fides/Fideslang privacy data map (dataset + system manifest YAML) for any repository by scanning source code and classifying fields against the Fideslang taxonomy.",
+      "version": "0.1.0",
+      "license": "MIT",
+      "category": "privacy",
+      "keywords": [
+        "privacy",
+        "fides",
+        "fideslang",
+        "data-map",
+        "gdpr",
+        "ccpa",
+        "compliance"
+      ],
+      "author": {
+        "name": "Noru",
+        "email": "dev@noru.tech"
+      }
+    }
+  ]
+}
