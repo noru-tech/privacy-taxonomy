@@ -32,6 +32,7 @@ import sys
 
 TAXONOMY_DIR = pathlib.Path(__file__).resolve().parent.parent / "references" / "taxonomy"
 FIDES_KEY_RE = re.compile(r"^[A-Za-z0-9_.<>-]+$")
+_BLOCK_SCALAR_RE = re.compile(r"^[>|][+\-]?\d*$")  # >, |, >-, >+, |-, |+, >2, |2, …
 RESOURCE_KEYS = {
     "dataset", "system", "data_category", "data_use", "data_subject",
     "organization", "policy", "registry", "evaluation",
@@ -205,6 +206,18 @@ def _parse_map(lines, i, indent):
                 d[key] = child
             else:
                 d[key] = None
+        elif _BLOCK_SCALAR_RE.match(val):
+            # Block scalar (> folded, | literal) — consume indented continuation lines as value.
+            # Without this, the continuation lines appear at a deeper indent than the current map
+            # context, causing _parse_map to break early and silently drop all subsequent keys
+            # (e.g. `collections:` after a `description: >` block).
+            i += 1
+            block_lines = []
+            while i < len(lines) and lines[i][0] > indent:
+                block_lines.append(lines[i][1])
+                i += 1
+            sep = " " if val[0] == ">" else "\n"
+            d[key] = sep.join(block_lines)
         else:
             d[key] = _scalar(val)
             i += 1
