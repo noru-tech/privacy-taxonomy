@@ -30,6 +30,7 @@ A YAML file (default `.fides/datamap.yml` in the target repo) with two top-level
 ```yaml
 dataset:
   - fides_key: <store>            # collections = tables/models, fields = columns/attributes
+    name: <human-readable store name>
     collections:
       - name: <table>
         fields:
@@ -37,6 +38,7 @@ dataset:
             data_categories: [user.contact.email]
 system:
   - fides_key: <service>
+    name: <human-readable service name>
     system_type: Application
     dataset_references: [<store>]
     privacy_declarations:
@@ -45,6 +47,9 @@ system:
         data_categories: [user.contact.email]
         data_subjects: [customer]
 ```
+
+Always include a human-readable `name` on each dataset and system (`fides_key` is the machine ID; a
+map without names is hard to review).
 
 See `references/example-datamap.yml` for a complete worked example to pattern-match against.
 
@@ -97,6 +102,12 @@ directory the `fides` CLI conventionally reads (`fides push .fides/`). Create it
 `dataset:` / `system:` top-level list shape shown above. Add brief `# TODO: verify` comments on any
 low-confidence labels.
 
+**If the file already exists, do not blindly overwrite it** — a human may have hand-corrected labels.
+Read it first and *merge*: add newly discovered datasets/systems/fields, fill in missing labels, and
+leave existing human-set `data_categories` / `data_use` / `data_subjects` and `# verified`-style
+comments intact. Only change an existing label if it is clearly wrong, and flag the change in your
+report (§7) so the user can review it.
+
 ### 6. Validate (and fix until clean)
 ```bash
 python3 "$SKILL_DIR/scripts/validate_manifest.py" .fides/datamap.yml
@@ -107,7 +118,10 @@ Fix every reported error (unknown keys come with a "did you mean …?" hint) and
 ### 7. Report
 Summarize for the user: counts (datasets, systems, collections, fields; fields categorized vs left
 as TODO), the systems and their data uses/subjects, and an explicit bullet list of the low-confidence
-labels you flagged so a human can confirm them.
+labels you flagged so a human can confirm them. **Call out any special-category (GDPR Art. 9 / Art. 10)
+data** you labelled — biometric, health/medical, race/ethnicity, religious belief, political opinion,
+sexual orientation, criminal history (see the classification guide for the exact keys) — as a separate
+list, since these carry the most compliance risk and warrant explicit human review.
 
 ## Notes
 - `$SKILL_DIR` above is this skill's directory; substitute its real path when running commands.

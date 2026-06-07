@@ -57,7 +57,7 @@ add a `# TODO: verify` comment rather than guessing.
 | `card_number`, `cc_number`, `pan`, `credit_card` | `user.financial.credit_card` |
 | `iban`, `account_number`, `bank_account`, `routing` | `user.financial.bank_account` |
 | `salary`, `income`, `payment`, `amount_paid` | `user.financial` / `user.payment` |
-| `job_title`, `title`, `position`, `role` (employment) | `user.job_title` |
+| `job_title`, `title`, `position` | `user.job_title` |
 | `employer`, `company`, `organization` | `user.contact.organization` |
 | `search_query`, `query_history` | `user.behavior.search_history` |
 | `viewed`, `clicks`, `events`, `activity`, `pageviews` | `user.behavior` |
@@ -71,6 +71,32 @@ add a `# TODO: verify` comment rather than guessing.
 
 If a name doesn't match anything above, read the surrounding model/comments for intent, then pick the
 closest snapshot key — or leave a `# TODO: verify`.
+
+**Context-dependent names** — don't classify on the name alone:
+- `role` usually means an authorization/RBAC role (`admin`, `member`) → `user.account` or
+  `system.operations`, **not** `user.job_title`. Only map to `user.job_title` if the surrounding
+  model is clearly about employment.
+- `name` on a non-person table (e.g. a `products.name` or `tags.name` column) is not personal data —
+  leave it uncategorized.
+- `id` is `user.unique_id` only when the row *is* a person; on a non-person table it's
+  `system.operations` or left off.
+
+## Special-category data (flag for extra review)
+
+These categories map to **GDPR Article 9 "special category"** data (plus Article 10 for criminal
+history) — the highest-risk labels, which usually need an explicit lawful basis and stricter handling.
+Whenever you assign one of these, surface it in your final report (§7) so a human reviews it:
+
+- `user.biometric`, `user.biometric.*`, `user.authorization.biometric` — biometric data
+- `user.health_and_medical`, `user.health_and_medical.*` — health / medical (incl. genetic)
+- `user.demographic.race_ethnicity` — racial / ethnic origin
+- `user.demographic.religious_belief` — religious or philosophical beliefs
+- `user.demographic.political_opinion` — political opinions
+- `user.demographic.sexual_orientation` — sexual orientation / sex life
+- `user.criminal_history` — criminal convictions/offences (GDPR Art. 10, not Art. 9, but treat the same)
+
+This is about *flagging*, not classifying differently — still apply the most-specific key. The point is
+that wrongly applying or omitting one of these carries the most compliance risk.
 
 ## Where data_categories live in a dataset
 

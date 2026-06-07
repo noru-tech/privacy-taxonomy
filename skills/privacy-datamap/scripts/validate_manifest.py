@@ -77,6 +77,16 @@ def _scalar(raw):
     if s.startswith("[") and s.endswith("]"):  # inline flow sequence
         inner = s[1:-1].strip()
         return [_scalar(p) for p in _split_flow(inner)] if inner else []
+    if s.startswith("{") and s.endswith("}"):  # inline flow mapping
+        inner = s[1:-1].strip()
+        if not inner:
+            return {}
+        d = {}
+        for part in _split_flow(inner):
+            k, sep, v = part.partition(":")
+            if sep:
+                d[k.strip()] = _scalar(v) if v.strip() else None
+        return d
     if re.fullmatch(r"-?\d+", s):
         return int(s)
     if re.fullmatch(r"-?\d+\.\d+", s):
@@ -308,6 +318,8 @@ def validate(doc, valid):
             continue
         fk = _check_fides_key(rep, path, ds)
         if fk:
+            if fk in dataset_keys:
+                rep.err(f"{path}.fides_key", f"duplicate dataset fides_key '{fk}'")
             dataset_keys.add(fk)
         _check_categories(rep, path, ds, valid)
         collections = ds.get("collections")
@@ -330,12 +342,17 @@ def validate(doc, valid):
                     _check_fields(rep, cpath, col.get("fields"), valid)
 
     # ---- systems ----
+    system_keys = set()
     for si, sysd in enumerate(_aslist(doc.get("system"))):
         path = f"system[{si}]"
         if not isinstance(sysd, dict):
             rep.err(path, "system must be a mapping")
             continue
-        _check_fides_key(rep, path, sysd)
+        fk = _check_fides_key(rep, path, sysd)
+        if fk:
+            if fk in system_keys:
+                rep.err(f"{path}.fides_key", f"duplicate system fides_key '{fk}'")
+            system_keys.add(fk)
         if not sysd.get("system_type"):
             rep.err(path, "missing required `system_type`")
         for ref in _aslist(sysd.get("dataset_references")):
