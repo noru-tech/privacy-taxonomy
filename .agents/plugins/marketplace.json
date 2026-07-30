@@ -1,0 +1,21 @@
+{
+  "name": "privacy-taxonomy",
+  "interface": {
+    "displayName": "Privacy Taxonomy"
+  },
+  "plugins": [
+    {
+      "name": "privacy-taxonomy",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/noru-tech/privacy-taxonomy.git",
+        "ref": "main"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

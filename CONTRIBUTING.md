@@ -24,7 +24,8 @@ The shared skill lives under `skills/privacy-datamap/`:
 
 Host-specific plugin metadata lives in `.codex-plugin/plugin.json` and
 `.claude-plugin/plugin.json`. Keep their names, versions, descriptions, and discovery metadata
-aligned when changing a release.
+aligned when changing a release. Codex marketplace discovery metadata lives in
+`.agents/plugins/marketplace.json`; Claude marketplace metadata remains under `.claude-plugin/`.
 
 ## Development & testing
 

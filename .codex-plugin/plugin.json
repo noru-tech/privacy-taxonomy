@@ -1,6 +1,6 @@
 {
   "name": "privacy-taxonomy",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Generate a validated Fides/Fideslang privacy data map from a repository's source code.",
   "author": {
     "name": "Noru",

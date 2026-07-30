@@ -150,6 +150,9 @@ The validator exits `0` on success, `1` on validation errors (each unknown key c
 
 ```
 privacy-taxonomy/
+├── .agents/
+│   └── plugins/
+│       └── marketplace.json     # native Codex marketplace
 ├── .codex-plugin/
 │   └── plugin.json              # Codex plugin manifest
 ├── .claude-plugin/
