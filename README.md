@@ -5,12 +5,13 @@
 [![License: MIT](https://img.shields.io/badge/Code-MIT-blue.svg)](./LICENSE)
 [![Taxonomy: CC BY 4.0](https://img.shields.io/badge/Taxonomy-CC%20BY%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
 [![Claude Code Plugin](https://img.shields.io/badge/Claude%20Code-plugin-da7756.svg)](https://code.claude.com/docs/en/plugins)
+[![Codex Plugin](https://img.shields.io/badge/Codex-plugin-111827.svg)](https://developers.openai.com/plugins/build/plugins)
 
-`privacy-taxonomy` is a [Claude Code](https://claude.com/claude-code) plugin. Its `privacy-datamap`
-skill reads a codebase — ORM models, migrations, SQL DDL, API/GraphQL/protobuf schemas, DTOs — and
-emits a **validated Fides data map manifest**: `dataset` resources (collections → fields tagged with
-`data_categories`) plus `system` resources (`privacy_declarations` with `data_use` and
-`data_subjects`).
+`privacy-taxonomy` is a plugin for [Claude Code](https://claude.com/claude-code) and
+[Codex](https://developers.openai.com/codex/). Its shared `privacy-datamap` skill reads a codebase —
+ORM models, migrations, SQL DDL, API/GraphQL/protobuf schemas, DTOs — and emits a **validated Fides
+data map manifest**: `dataset` resources (collections → fields tagged with `data_categories`) plus
+`system` resources (`privacy_declarations` with `data_use` and `data_subjects`).
 
 Think of it as the source-code counterpart to Ethyca's `fides generate dataset` (which inspects a
 *live database* and leaves the privacy labels **blank**): this reads **code** in any language and
@@ -80,7 +81,19 @@ no virtualenv, and no network at runtime.**
 
 ## Install
 
-### As a Claude Code plugin (recommended)
+### Codex
+
+Add the repository as a marketplace:
+
+```bash
+codex plugin marketplace add noru-tech/privacy-taxonomy
+```
+
+Then enter `/plugins` in Codex CLI (or open **Plugins** in the desktop app), select the
+`privacy-taxonomy` marketplace, and install the plugin. Start a new Codex session after installing
+so the bundled skill is available.
+
+### Claude Code
 
 ```bash
 # add this repo as a marketplace, then install the plugin
@@ -88,26 +101,31 @@ no virtualenv, and no network at runtime.**
 /plugin install privacy-taxonomy@privacy-taxonomy
 ```
 
-(Replace `noru-tech/privacy-taxonomy` with wherever you host the repo.)
+(For either host, replace `noru-tech/privacy-taxonomy` with wherever you host the repo.)
 
 ### Manual (skill only)
 
-Copy the skill into your user skills directory:
+Copy the skill into the user skills directory for your agent:
 
 ```bash
+# Codex
+cp -R skills/privacy-datamap ~/.codex/skills/privacy-datamap
+
+# Claude Code
 cp -R skills/privacy-datamap ~/.claude/skills/privacy-datamap
 ```
 
 ## Usage
 
-In any repository, ask Claude Code:
+In any repository, ask Codex or Claude Code:
 
 > Generate a Fides data map for this repo.
 
-or invoke the skill directly:
+Or invoke the skill directly using the syntax for your agent:
 
-```
-/privacy-datamap
+```text
+$privacy-datamap   # Codex
+/privacy-datamap   # Claude Code
 ```
 
 It writes `.fides/datamap.yml` (override the path by saying where you want it), validates it,
@@ -132,6 +150,8 @@ The validator exits `0` on success, `1` on validation errors (each unknown key c
 
 ```
 privacy-taxonomy/
+├── .codex-plugin/
+│   └── plugin.json              # Codex plugin manifest
 ├── .claude-plugin/
 │   ├── plugin.json              # plugin manifest
 │   └── marketplace.json         # self-referential marketplace (source ./)

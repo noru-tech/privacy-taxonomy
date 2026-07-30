@@ -6,6 +6,15 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-07-30
+
+### Added
+- Codex plugin metadata under `.codex-plugin/`.
+- Codex installation and invocation instructions.
+
+### Changed
+- Documented the existing skill for use from both Codex and Claude Code.
+
 ## [0.1.0] - 2026-06-02
 
 ### Added
@@ -23,5 +32,6 @@ All notable changes to this project are documented here. The format is based on
 - Project scaffolding: README, LICENSE (MIT), NOTICE (CC BY 4.0 attribution), SECURITY,
   CONTRIBUTING, CODE_OF_CONDUCT.
 
-[Unreleased]: https://github.com/noru-tech/privacy-taxonomy/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/noru-tech/privacy-taxonomy/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/noru-tech/privacy-taxonomy/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/noru-tech/privacy-taxonomy/releases/tag/v0.1.0

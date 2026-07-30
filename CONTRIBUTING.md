@@ -13,7 +13,7 @@ bug reports, classification-guide improvements, validator fixes, and docs.
 
 ## Project layout
 
-The plugin lives under `skills/privacy-datamap/`:
+The shared skill lives under `skills/privacy-datamap/`:
 
 - `SKILL.md` — the agent workflow.
 - `scripts/dump_taxonomy.py` — prints the bundled taxonomy.
@@ -21,6 +21,10 @@ The plugin lives under `skills/privacy-datamap/`:
 - `references/taxonomy/` — vendored Fideslang snapshot (CC BY 4.0) + `SOURCE.md`.
 - `references/classification-guide.md` — field-name → category heuristics.
 - `references/example-datamap.yml` — the canonical valid example.
+
+Host-specific plugin metadata lives in `.codex-plugin/plugin.json` and
+`.claude-plugin/plugin.json`. Keep their names, versions, descriptions, and discovery metadata
+aligned when changing a release.
 
 ## Development & testing
 
@@ -44,13 +48,14 @@ python3 "$SKILL/scripts/validate_manifest.py" "$SKILL/references/example-datamap
 
 If you change the validator, please confirm all four checks above. If you add a new field-name
 mapping to `classification-guide.md`, make sure the target key actually exists in the snapshot
-(`grep` it in `references/taxonomy/data_categories.json`).
+(`rg` it in `references/taxonomy/data_categories.json`).
 
 ## Updating the taxonomy snapshot
 
 Follow the recipe in `skills/privacy-datamap/references/taxonomy/SOURCE.md`. It re-fetches the
 upstream Fideslang source and regenerates the JSON with the standard library `ast` module, then asks
-you to update the recorded commit/version/date. Bump the plugin `version` when you do.
+you to update the recorded commit/version/date. Bump the version in both plugin manifests when you
+do.
 
 ## Pull requests
 
