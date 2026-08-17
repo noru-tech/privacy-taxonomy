@@ -10,8 +10,8 @@
     {
       "name": "privacy-taxonomy",
       "source": "./",
-      "description": "Generate a Fides/Fideslang privacy data map (dataset + system manifest YAML) for any repository by scanning source code and classifying fields against the Fideslang taxonomy.",
-      "version": "0.2.1",
+      "description": "Generate a validated Fides/Fideslang privacy data map from source code, including named first-party systems and external vendors.",
+      "version": "0.3.0",
       "license": "MIT",
       "category": "privacy",
       "keywords": [

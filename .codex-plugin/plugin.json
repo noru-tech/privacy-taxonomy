@@ -1,7 +1,7 @@
 {
   "name": "privacy-taxonomy",
-  "version": "0.2.1",
-  "description": "Generate a validated Fides/Fideslang privacy data map from a repository's source code.",
+  "version": "0.3.0",
+  "description": "Generate a validated Fides/Fideslang privacy data map with named first-party systems and external vendors.",
   "author": {
     "name": "Noru",
     "email": "bip@noru.tech",
@@ -26,7 +26,7 @@
   "interface": {
     "displayName": "Privacy Taxonomy",
     "shortDescription": "Generate validated Fides privacy data maps",
-    "longDescription": "Scan repository schemas and models, classify personal data against the bundled Fideslang taxonomy, and generate a validated privacy data map.",
+    "longDescription": "Scan repository schemas and integrations, classify personal data against the bundled Fideslang taxonomy, reconcile named external vendors, and generate a validated privacy data map.",
     "developerName": "Noru",
     "category": "Productivity",
     "capabilities": [

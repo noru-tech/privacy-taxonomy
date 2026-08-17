@@ -2,8 +2,8 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "privacy-taxonomy",
   "displayName": "Privacy Taxonomy",
-  "version": "0.2.1",
-  "description": "Generate a Fides/Fideslang privacy data map (dataset + system manifest YAML) for any repository by scanning source code and classifying fields against the Fideslang taxonomy.",
+  "version": "0.3.0",
+  "description": "Generate a validated Fides/Fideslang privacy data map from source code, including named first-party systems and external vendors.",
   "author": {
     "name": "Noru",
     "email": "bip@noru.tech"

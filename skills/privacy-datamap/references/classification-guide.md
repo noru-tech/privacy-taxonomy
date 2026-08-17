@@ -85,7 +85,7 @@ closest snapshot key — or leave a `# TODO: verify`.
 
 These categories map to **GDPR Article 9 "special category"** data (plus Article 10 for criminal
 history) — the highest-risk labels, which usually need an explicit lawful basis and stricter handling.
-Whenever you assign one of these, surface it in your final report (§7) so a human reviews it:
+Whenever you assign one of these, surface it in your final report (§9) so a human reviews it:
 
 - `user.biometric`, `user.biometric.*`, `user.authorization.biometric` — biometric data
 - `user.health_and_medical`, `user.health_and_medical.*` — health / medical (incl. genetic)
@@ -106,11 +106,14 @@ use collection- or dataset-level categories only for a label that truly applies 
 
 ## Building `system` resources
 
-One System per deployable service / app (in a monorepo, usually one per top-level service dir).
+Create one System per deployable first-party service/app and one `Third Party` System per material
+external vendor. Read `vendor-system-guide.md` before modeling external systems; its identity,
+grouping, activation-status, reconciliation, and AI rules are required.
 
 - **`system_type`** — free text; conventional values: `Application`, `Service`, `Database`,
   `Data Warehouse`, `Third Party`, `Integration`.
-- **`dataset_references`** — list the `fides_key`s of datasets this system reads/writes.
+- **`dataset_references`** — list the `fides_key`s of datasets this system reads/writes. Use `[]`
+  for an external vendor whose internal dataset schema is not defined locally.
 - **`privacy_declarations`** — one per distinct *purpose*. Each needs:
   - `name` — human label for the purpose.
   - `data_use` — from `data_uses.json`. Common picks:
@@ -137,8 +140,9 @@ One System per deployable service / app (in a monorepo, usually one per top-leve
 
 ## Spotting systems & third-party data flows from code
 
-- Third-party SDK imports/clients imply an **egress** flow and often `third_party_sharing`:
-  Stripe/Braintree (payments), Segment/Amplitude/Mixpanel/GA (analytics), Sentry (telemetry),
-  Twilio/SendGrid/Mailgun (comms), Salesforce/HubSpot (CRM), OpenAI/Anthropic (AI).
-- Env vars / config keys (`*_API_KEY`, `*_DSN`, `*_WEBHOOK`) hint at integrated systems.
+- Third-party SDK imports/clients imply a possible **egress** flow and often `third_party_sharing`.
+  They also require a named vendor System unless explicitly excluded with a reason.
+- Env vars/config keys, integration registries, OAuth/webhook handlers, infrastructure, and tests can
+  reveal providers missed by import-only scanning. Use the complete checklist in
+  `vendor-system-guide.md`.
 - A monorepo's `services/*`, `apps/*`, or separate `Dockerfile`s usually each map to one System.

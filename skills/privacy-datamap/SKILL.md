@@ -1,9 +1,6 @@
 ---
 name: privacy-datamap
-version: 0.1.0
-description: Generate a Fides/Fideslang privacy data map (dataset + system manifest YAML) for the current repository by scanning source code and classifying fields against the fideslang taxonomy. Use when the user wants to create a fides data map, a fideslang metadata file, a privacy manifest, or to annotate data categories / data uses / data subjects for a repo.
-requires:
-  bins: ["python3"]
+description: Generate a Fides/Fideslang privacy data map (dataset + system manifest YAML) by scanning source code, classifying fields, and reconciling named first-party systems and external vendors. Use when the user wants a Fides data map, Fideslang metadata, privacy manifest, vendor/integration inventory, or annotations for data categories, uses, and subjects.
 ---
 
 # Fideslang data map generator
@@ -69,8 +66,9 @@ before concluding you have the complete list. Keys near the end of the list (suc
 `user.unique_id.pseudonymous`, `user.sensor`) are silently lost if output is cut short.
 
 Read `references/classification-guide.md` for the field-name → category cheat-sheet and for how to
-infer `system_type`, `data_use`, and `data_subjects`. **Only keys printed here are valid** — never
-invent a key.
+infer `system_type`, `data_use`, and `data_subjects`. Read `references/vendor-system-guide.md` for
+external-vendor discovery, modeling, AI, reconciliation, and exclusion rules. **Only taxonomy keys
+printed here are valid** — never invent a key.
 
 ### 2. Discover data-bearing artifacts
 Search the repo broadly (use Glob/Grep; for a large or unfamiliar repo, dispatch an `Explore`
@@ -80,8 +78,10 @@ subagent). Look across languages for:
 - **DB schema**: `*.sql` DDL, Alembic / Django / Rails / Liquibase / Flyway migrations.
 - **API & contracts**: OpenAPI/Swagger, GraphQL SDL, `*.proto`, JSON Schema, Pydantic / Zod /
   dataclasses / TypeScript DTOs.
-- **System & third-party hints**: env var names (`*_API_KEY`, `*_DSN`), SDK imports (Stripe,
-  Segment, GA, Sentry, Twilio, OpenAI…), and `services/*` / `apps/*` / per-service Dockerfiles.
+- **Systems and third parties**: apply every discovery source and provider class in
+  `references/vendor-system-guide.md`, including dependencies/imports, integration registries,
+  OAuth/webhooks/API clients, environment/configuration, infrastructure, feature flags, and tests
+  that reveal real payloads. Record whether evidence proves active use or only implementation.
 
 ### 3. Build `dataset` resources
 One Dataset per logical data store. Map tables/models → `collections`, columns/attributes →
@@ -91,12 +91,21 @@ One Dataset per logical data store. Map tables/models → `collections`, columns
 (surrogate PKs, timestamps) → `system.operations` or leave off.
 
 ### 4. Build `system` resources
-One System per deployable service/app. Set `system_type`, `dataset_references` (the dataset
-`fides_key`s it uses), and one `privacy_declaration` per distinct purpose — each with `name`,
-`data_use`, `data_categories`, and inferred `data_subjects`. Use third-party SDK usage to add
-`third_party_sharing` declarations where data clearly leaves the system.
+Create one System per deployable first-party service/app **and** one `Third Party` System per
+material external vendor that receives, stores, processes, or can access personal data. Preserve
+vendor identity and follow the grouping, empty-dataset, activation-status, and AI rules in
+`references/vendor-system-guide.md`. A `third_party_sharing` declaration on the sending application
+does not replace the receiving vendor's System. Give each System one declaration per distinct
+purpose with `name`, `data_use`, `data_categories`, and inferred `data_subjects`.
 
-### 5. Write the manifest
+### 5. Reconcile external vendors
+Before writing, build the vendor reconciliation table defined in
+`references/vendor-system-guide.md`. Give every discovered material vendor its own System, a named
+grouped System, or an explicit exclusion with a reason. Add `# TODO: verify enabled/configured in
+this deployment` for implemented integrations whose activation cannot be established. Do not
+finish with a vendor that has no disposition.
+
+### 6. Write the manifest
 Write to `.fides/datamap.yml` in the target repo (or a path the user specified). `.fides/` is the
 directory the `fides` CLI conventionally reads (`fides push .fides/`). Create it if absent. Use the
 `dataset:` / `system:` top-level list shape shown above. Add brief `# TODO: verify` comments on any
@@ -106,22 +115,39 @@ low-confidence labels.
 Read it first and *merge*: add newly discovered datasets/systems/fields, fill in missing labels, and
 leave existing human-set `data_categories` / `data_use` / `data_subjects` and `# verified`-style
 comments intact. Only change an existing label if it is clearly wrong, and flag the change in your
-report (§7) so the user can review it.
+report (§9) so the user can review it.
 
-### 6. Validate (and fix until clean)
+### 7. Validate taxonomy (and fix until clean)
 ```bash
 python3 "$SKILL_DIR/scripts/validate_manifest.py" .fides/datamap.yml
 ```
 Fix every reported error (unknown keys come with a "did you mean …?" hint) and re-run until it prints
 `OK: N dataset(s), N system(s), all keys valid`. Treat warnings as review items.
 
-### 7. Report
-Summarize for the user: counts (datasets, systems, collections, fields; fields categorized vs left
-as TODO), the systems and their data uses/subjects, and an explicit bullet list of the low-confidence
-labels you flagged so a human can confirm them. **Call out any special-category (GDPR Art. 9 / Art. 10)
-data** you labelled — biometric, health/medical, race/ethnicity, religious belief, political opinion,
-sexual orientation, criminal history (see the classification guide for the exact keys) — as a separate
-list, since these carry the most compliance risk and warrant explicit human review.
+### 8. Check System coverage (and fix until clean)
+```bash
+python3 "$SKILL_DIR/scripts/check_system_coverage.py" . .fides/datamap.yml \
+  --exclusions .fides/vendor-exclusions.json
+```
+Omit `--exclusions` when no exclusions file exists. Reconcile every warning; do not invent entries.
+The workflow is complete only when taxonomy validation passes, every material vendor is represented
+or explicitly excluded with a reason, and the checker reports zero unresolved vendors.
+
+### 9. Report
+Summarize counts (datasets, systems, collections, fields; fields categorized vs TODO), then list:
+
+- first-party systems;
+- third-party systems;
+- grouped vendors and why they were grouped;
+- implemented-but-unconfirmed integrations;
+- explicitly excluded vendors and reasons;
+- discovered vendors that could not be confidently classified; and
+- reconciliation counts: `N discovered, N represented, N grouped, N excluded, N unresolved`.
+
+Treat every unresolved material vendor as a review item. Also list low-confidence labels and
+**special-category (GDPR Art. 9 / Art. 10) data** — biometric, health/medical, race/ethnicity,
+religious belief, political opinion, sexual orientation, criminal history — separately for human
+review, as detailed in `references/classification-guide.md`.
 
 ## Notes
 - `$SKILL_DIR` above is this skill's directory; substitute its real path when running commands.

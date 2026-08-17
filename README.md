@@ -64,10 +64,13 @@ A complete, valid example lives at
 3. **Classify** each field to the most-specific applicable `data_categories`, guided by a curated
    field-name → category cheat-sheet. Genuinely ambiguous fields are left with a `# TODO: verify`
    comment instead of a confident guess.
-4. **Assemble** `dataset` and `system` resources (with `data_use` and `data_subjects` inferred from
-   context).
-5. **Validate** the output against the bundled taxonomy and fix until clean.
-6. **Report** counts and an explicit list of low-confidence labels for human review.
+4. **Assemble** datasets, first-party systems, and named external-vendor systems (with `data_use`
+   and `data_subjects` inferred from context).
+5. **Reconcile vendors** so every material integration is represented, grouped by name, or excluded
+   with a reason.
+6. **Validate** taxonomy keys and run deterministic System coverage checks until both are clean.
+7. **Report** system/vendor coverage, counts, exclusions, unresolved review items, and
+   low-confidence labels.
 
 ## Atomic & offline
 
@@ -141,10 +144,14 @@ python3 "$SKILL/scripts/dump_taxonomy.py"            # categories | uses | subje
 
 # Validate a manifest against the bundled snapshot
 python3 "$SKILL/scripts/validate_manifest.py" .fides/datamap.yml
+
+# Check that discovered external vendors have a named System or reasoned exclusion
+python3 "$SKILL/scripts/check_system_coverage.py" . .fides/datamap.yml
 ```
 
-The validator exits `0` on success, `1` on validation errors (each unknown key comes with a
-"did you mean …?" suggestion), and `2` on usage/parse errors.
+The taxonomy validator exits `0` on success, `1` on validation errors (each unknown key comes with a
+"did you mean …?" suggestion), and `2` on usage/parse errors. The coverage checker exits `1` when a
+material discovered vendor is unresolved and `2` for invalid arguments or exclusion configuration.
 
 ## Repository layout
 
@@ -162,12 +169,15 @@ privacy-taxonomy/
 │   └── privacy-datamap/
 │       ├── SKILL.md             # the agent workflow
 │       ├── scripts/
+│       │   ├── check_system_coverage.py
 │       │   ├── dump_taxonomy.py
 │       │   └── validate_manifest.py
-│       └── references/
-│           ├── taxonomy/        # vendored Fideslang snapshot (CC BY 4.0) + SOURCE.md
-│           ├── classification-guide.md
-│           └── example-datamap.yml
+│       ├── references/
+│       │   ├── taxonomy/        # vendored Fideslang snapshot (CC BY 4.0) + SOURCE.md
+│       │   ├── classification-guide.md
+│       │   ├── vendor-system-guide.md
+│       │   └── example-datamap.yml
+│       └── tests/               # standard-library coverage-checker regressions + fixtures
 ├── README.md  LICENSE  NOTICE  SECURITY.md  CONTRIBUTING.md  CODE_OF_CONDUCT.md  CHANGELOG.md
 ```
 
@@ -184,6 +194,11 @@ The validator guarantees every emitted key is **valid**, not that every judgemen
 Field classification is a model inference: review the `# TODO: verify` items and spot-check the rest
 before treating the output as authoritative for compliance purposes. This tool accelerates a data
 map; it does not replace privacy/legal review.
+
+Vendor discovery is static and intentionally conservative. Dynamic imports, runtime-only secrets,
+proprietary wrappers, remotely configured integrations, and vendors absent from the built-in alias
+table can require manual reconciliation. The coverage checker reports evidence and gaps; it never
+invents a vendor System.
 
 ## Licensing & attribution
 

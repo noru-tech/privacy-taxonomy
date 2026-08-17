@@ -1,0 +1,10 @@
+system:
+  - fides_key: hubspot_app_store
+    name: HubSpot App Store Integration
+    system_type: Third Party
+    dataset_references: []
+    privacy_declarations:
+      - name: CRM sync
+        data_use: third_party_sharing
+        data_categories: [user.contact.email]
+        data_subjects: [customer]

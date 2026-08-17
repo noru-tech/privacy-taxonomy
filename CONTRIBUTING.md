@@ -18,8 +18,10 @@ The shared skill lives under `skills/privacy-datamap/`:
 - `SKILL.md` — the agent workflow.
 - `scripts/dump_taxonomy.py` — prints the bundled taxonomy.
 - `scripts/validate_manifest.py` — validates a manifest against the snapshot.
+- `scripts/check_system_coverage.py` — reconciles discovered vendors with named Systems.
 - `references/taxonomy/` — vendored Fideslang snapshot (CC BY 4.0) + `SOURCE.md`.
 - `references/classification-guide.md` — field-name → category heuristics.
+- `references/vendor-system-guide.md` — external-vendor discovery and modeling rules.
 - `references/example-datamap.yml` — the canonical valid example.
 
 Host-specific plugin metadata lives in `.codex-plugin/plugin.json` and
@@ -40,14 +42,17 @@ python3 "$SKILL/scripts/dump_taxonomy.py" | head
 # 2. the example validates (expect "OK")
 python3 "$SKILL/scripts/validate_manifest.py" "$SKILL/references/example-datamap.yml"
 
-# 3. a deliberately broken manifest fails (expect non-zero exit + suggestions)
+# 3. coverage-checker regressions pass
+python3 -m unittest discover -s "$SKILL/tests" -v
+
+# 4. a deliberately broken manifest fails (expect non-zero exit + suggestions)
 #    (edit a copy of the example to introduce a bogus key and run the validator)
 
-# 4. atomicity: the validator still works without PyYAML
+# 5. atomicity: the validator still works without PyYAML
 #    (run it in an environment where `import yaml` fails — it must use the fallback loader)
 ```
 
-If you change the validator, please confirm all four checks above. If you add a new field-name
+If you change either validator, please confirm all five checks above. If you add a new field-name
 mapping to `classification-guide.md`, make sure the target key actually exists in the snapshot
 (`rg` it in `references/taxonomy/data_categories.json`).
 

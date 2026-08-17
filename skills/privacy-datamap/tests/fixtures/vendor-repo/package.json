@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "@hubspot/api-client": "latest",
+    "@sentry/node": "latest",
+    "stripe": "latest"
+  }
+}

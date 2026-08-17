@@ -1,0 +1,11 @@
+system:
+  # TODO: verify enabled/configured in this deployment
+  - fides_key: openai_inference
+    name: OpenAI
+    system_type: Third Party
+    dataset_references: []
+    privacy_declarations:
+      - name: Optional inference
+        data_use: third_party_sharing
+        data_categories: [user.content.private]
+        data_subjects: [customer]

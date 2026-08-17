@@ -1,0 +1,28 @@
+system:
+  - fides_key: hubspot_crm
+    name: HubSpot CRM
+    system_type: Third Party
+    dataset_references: []
+    privacy_declarations:
+      - name: CRM sync
+        data_use: third_party_sharing
+        data_categories: [user.contact.email]
+        data_subjects: [customer]
+  - fides_key: stripe_payments
+    name: Stripe
+    system_type: Third Party
+    dataset_references: []
+    privacy_declarations:
+      - name: Payments
+        data_use: third_party_sharing
+        data_categories: [user.payment]
+        data_subjects: [customer]
+  - fides_key: sentry_observability
+    name: Sentry
+    system_type: Third Party
+    dataset_references: []
+    privacy_declarations:
+      - name: Error monitoring
+        data_use: third_party_sharing
+        data_categories: [user.device.ip_address]
+        data_subjects: [customer]
