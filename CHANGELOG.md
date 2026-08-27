@@ -6,6 +6,26 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-08-27
+
+### Changed
+- **Superseded by [`noru-tech/noru-grc-engineering`](https://github.com/noru-tech/noru-grc-engineering).**
+  Development moves there, where the `privacy-datamap` skill is a full last-mile piece with
+  `:scan` / `:diff` / `:push` and lands the data map in Noru. The skill name is unchanged, so
+  existing invocations keep working; the plugin name and the install path change from
+  `privacy-taxonomy@privacy-taxonomy` to `privacy-datamap@noru-grc-engineering`.
+
+  No functional change to the code in this repository. It still installs and still works. It will
+  not receive fixes — including the two already fixed upstream: the bundled YAML fallback loader
+  here resolves `yes` / `no` / `on` / `off` as strings rather than booleans, and mishandles
+  block-scalar chomping.
+
+  The Fideslang snapshot under `skills/privacy-datamap/references/taxonomy/` is byte-identical to
+  the one now canonical at `contract/lib/taxonomy/` in the monorepo, where a drift check keeps every
+  vendored copy in step. That duplication — the same 85 entries pinned to the same upstream commit
+  in two repositories, with two refresh recipes that had already diverged in wording and no check
+  able to see across the boundary — is the reason the two were merged.
+
 ## [0.2.1] - 2026-07-30
 
 ### Fixed

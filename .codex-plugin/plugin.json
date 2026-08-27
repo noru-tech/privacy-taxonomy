@@ -1,7 +1,7 @@
 {
   "name": "privacy-taxonomy",
-  "version": "0.2.1",
-  "description": "Generate a validated Fides/Fideslang privacy data map from a repository's source code.",
+  "version": "0.3.0",
+  "description": "[SUPERSEDED — use privacy-datamap@noru-grc-engineering] Generate a Fides/Fideslang privacy data map for any repository by scanning source code and classifying fields against the Fideslang taxonomy. Development moved to noru-tech/noru-grc-engineering, where this is a full last-mile piece that also lands the map in Noru.",
   "author": {
     "name": "Noru",
     "email": "bip@noru.tech",
