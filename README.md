@@ -1,5 +1,37 @@
 # privacy-taxonomy
 
+> [!IMPORTANT]
+> ## Superseded by [`noru-tech/noru-grc-engineering`](https://github.com/noru-tech/noru-grc-engineering)
+>
+> This repository is no longer developed. The `privacy-datamap` skill lives on there as a full
+> **last-mile piece** — same skill name, so `/privacy-datamap` and "generate a Fides data map for
+> this repo" keep working exactly as they do here.
+>
+> ```text
+> /plugin marketplace add noru-tech/noru-grc-engineering
+> /plugin install privacy-datamap@noru-grc-engineering
+> ```
+>
+> ```bash
+> codex plugin marketplace add noru-tech/noru-grc-engineering
+> codex plugin add privacy-datamap@noru-grc-engineering
+> ```
+>
+> **What you get that is not here.** The skill became a piece with three commands —
+> `:scan` / `:diff` / `:push` — so the data map lands in Noru through one idempotent `ingestDatamap`
+> call instead of stopping at a local file. A `file:line` citation sits behind every field and a
+> named owner behind every classification; a field the classifier cannot resolve blocks the push
+> instead of carrying a `# TODO: verify` comment nothing enforces. It runs headless in CI, failing
+> the build on drift or an expired sign-off. `.fides/datamap.yml` is still produced, byte for byte
+> the same content that reaches Noru.
+>
+> **Two fixes you do not have here.** The bundled YAML fallback loader in this repository resolves
+> `yes`, `no`, `on` and `off` as strings rather than booleans, and mishandles block-scalar chomping.
+> Both were fixed in the monorepo's shared loader, which the piece uses.
+>
+> Everything below describes this archived version. It still installs and still works; it will not
+> receive fixes.
+
 > Generate a [Fideslang](https://github.com/ethyca/fideslang) **privacy data map** for any repository — straight from its source code.
 
 [![License: MIT](https://img.shields.io/badge/Code-MIT-blue.svg)](./LICENSE)
